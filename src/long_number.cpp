@@ -50,7 +50,7 @@ number num_parse(const char* str)
     
     num.n = n;
     
-    num.digits = calloc(num.n, sizeof(num.digits[0]));
+    num.digits = (unsigned*)calloc(num.n, sizeof(num.digits[0]));
     for (unsigned i = 0; i < n; i++)
         num.digits[i] = str[n - i - 1] - '0';
     
@@ -83,7 +83,7 @@ number num_read(FILE* input)
         num_return(ERROR_INVALID_FORMAT, get_null_num());
     
     unsigned buffer_size = 10;
-    char* buffer = calloc(buffer_size, sizeof(char));
+    char* buffer = (char*)calloc(buffer_size, sizeof(char));
     unsigned buffer_pos = 0;
     
     do
@@ -91,7 +91,7 @@ number num_read(FILE* input)
         if (buffer_pos == buffer_size)
         {
             buffer_size *= 2;
-            buffer = realloc(buffer, buffer_size);
+            buffer = (char*)realloc(buffer, buffer_size);
         }
         
         buffer[buffer_pos++] = front;
@@ -104,7 +104,7 @@ number num_read(FILE* input)
         ungetc(front, input);
     
     num.n = buffer_pos;
-    num.digits = calloc(buffer_pos, sizeof(num.digits[0]));
+    num.digits = (unsigned*)calloc(buffer_pos, sizeof(num.digits[0]));
     for (unsigned i = 0; i < buffer_pos; i++)
         num.digits[buffer_pos - i - 1] = buffer[i] - '0';
     
@@ -196,7 +196,7 @@ number shrink_leading_zeros(number a)
     while (a.n > 1 && a.digits[a.n - 1] == 0)
         a.n--;
     
-    a.digits = realloc(a.digits, a.n * sizeof(a.digits[0]));
+    a.digits = (unsigned*)realloc(a.digits, a.n * sizeof(a.digits[0]));
     return a;
 }
 
@@ -213,7 +213,7 @@ number num_add_unisign(number a, number b)
     number res;
     res.is_negative = a.is_negative;
     res.n = unsigned_max(a.n, b.n) + 1;
-    res.digits = calloc(res.n, sizeof(res.digits[0]));
+    res.digits = (unsigned*)calloc(res.n, sizeof(res.digits[0]));
     
     int carry = 0;
     for (unsigned i = 0; i < res.n; i++)
@@ -233,7 +233,7 @@ number num_subtract_lower(number a, number b)
     number res;
     res.is_negative = 0;
     res.n = a.n;
-    res.digits = calloc(res.n, sizeof(res.digits[0]));
+    res.digits = (unsigned*)calloc(res.n, sizeof(res.digits[0]));
     
     char is_carry = 0;
     for (unsigned i = 0; i < a.n; i++)
@@ -309,7 +309,7 @@ number num_mul(number a, number b)
     
     res.is_negative = (a.is_negative ? 1 : 0) ^ (b.is_negative ? 1 : 0);
     res.n = a.n + b.n + 1;
-    res.digits = calloc(res.n, sizeof(res.digits[0]) * res.n);
+    res.digits = (unsigned*)calloc(res.n, sizeof(res.digits[0]) * res.n);
     
     for (unsigned i = 0; i < a.n; i++)
     {
@@ -342,7 +342,7 @@ void shift(number a, int by)
 number num_copy(number a)
 {
     number b = a;
-    b.digits = malloc(a.n * sizeof(a.digits[0]));
+    b.digits = (unsigned*)malloc(a.n * sizeof(a.digits[0]));
     memcpy(b.digits, a.digits, b.n * sizeof(b.digits[0]));
     return b;
 }
@@ -365,11 +365,11 @@ void num_div(number a, number b, number* quotient, number* remainder)
     number r = num_copy(a);
     
     number q = a;
-    q.digits = calloc(q.n, sizeof(q.digits[0]));
+    q.digits = (unsigned*)calloc(q.n, sizeof(q.digits[0]));
     
     number bPower;
     bPower.n = a.n + 1;
-    bPower.digits = calloc(bPower.n, sizeof(bPower.digits[0]));
+    bPower.digits = (unsigned*)calloc(bPower.n, sizeof(bPower.digits[0]));
     bPower.is_negative = 0;
     memcpy(bPower.digits, b.digits, sizeof(bPower.digits[0]) * b.n);
     
