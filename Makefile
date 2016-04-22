@@ -36,11 +36,17 @@ clean:
 dirs:
 	$(MKDIR_P) -p build
 
-build/unit_tests.elf: build/unit_tests.o build/long_number.o
-	$(CC) $(CFLAGS) build/unit_tests.o build/long_number.o -o build/unit_tests.elf
+build/unit_tests.elf: build/UnitTests.o build/NumberException.o build/Number.o build/UnsignedNumber.o
+	$(CC) $(CFLAGS) build/UnitTests.o build/NumberException.o -o build/UnsignedNumber.elf
 
-build/unit_tests.o: src/unit_tests.cpp src/long_number.h
-	$(CC) $(CFLAGS) -c src/unit_tests.cpp -o build/unit_tests.o
+build/UnitTests.o: src/UnitTests.cpp src/Number.hpp src/NumberException.hpp src/UnsignedNumber.hpp
+	$(CC) $(CFLAGS) -c src/UnitTests.cpp -o build/UnitTests.o
 
-build/long_number.o: src/long_number.cpp src/long_number.h
-	$(CC) $(CFLAGS) -c src/long_number.cpp -o build/long_number.o
+build/Number.o: src/Number.cpp src/Number.hpp
+	$(CC) $(CFLAGS) -c src/Number.cpp -o build/Number.o
+	
+build/UnsignedNumber.o: src/UnsignedNumber.cpp src/UnsignedNumber.hpp
+	$(CC) $(CFLAGS) -c src/UnsignedNumber.cpp -o build/UnsignedNumber.o
+	
+build/NumberException.o: src/NumberException.cpp src/NumberException.hpp
+	$(CC) $(CFLAGS) -c src/NumberException.cpp -o build/NumberException.o
