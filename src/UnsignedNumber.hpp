@@ -1,14 +1,16 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <string>
 
 namespace numlib
 {
 
 class UnsignedNumber
 {
-    unsigned* digits;
-    unsigned n;
+    std::vector<unsigned> digits;
+    
 public :
     
     UnsignedNumber();
