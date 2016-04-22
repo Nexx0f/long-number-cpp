@@ -1,5 +1,6 @@
 build/
 *.gcov
-gcov-res.txt
+gcov-number.txt
+gcov-unsigned-number.txt
 valgrind-res.txt
 tmp.txt

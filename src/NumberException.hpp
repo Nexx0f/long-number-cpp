@@ -8,19 +8,19 @@ namespace numlib
 enum class NumberError
 {
     // failed to parse number
-    ERROR_INVALID_FORMAT,
+    INVALID_FORMAT,
     
     // division by zero
-    ERROR_DIVISION_BY_ZERO,
+    DIVISION_BY_ZERO,
     
     // when using operator[]
-    ERROR_INDEX_OUT_OF_BOUNDS,
+    INDEX_OUT_OF_BOUNDS,
     
     // when using UnsignedNumber constructor with signed ints
-    ERROR_NEGATIVE_NUMBER,
+    NEGATIVE_NUMBER,
     
     // null pointer / etc.
-    ERROR_INVALID_ARGUMENT
+    INVALID_ARGUMENT
 };
 
 class NumberException : public std::exception

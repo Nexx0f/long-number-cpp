@@ -12,7 +12,7 @@ class Number : public UnsignedNumber
 public :
     
     Number();
-    Number(const Number& num);
+    Number(const Number& num) = default;
     Number(const UnsignedNumber& num);
     Number(unsigned);
     Number(int);
@@ -20,7 +20,7 @@ public :
     
     ~Number() override;
     
-    Number& operator=(const Number& lhs);
+    Number& operator=(const Number& lhs) = default;
     
     Number& operator+=(const Number& rhs);
     Number& operator-=(const Number& rhs);

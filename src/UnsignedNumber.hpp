@@ -14,14 +14,14 @@ class UnsignedNumber
 public :
     
     UnsignedNumber();
-    UnsignedNumber(const UnsignedNumber& from);
+    UnsignedNumber(const UnsignedNumber& from) = default;
     UnsignedNumber(unsigned from);
     UnsignedNumber(int from);
     UnsignedNumber(std::string from);
     
     virtual ~UnsignedNumber();
     
-    UnsignedNumber& operator=(const UnsignedNumber& lhs);
+    UnsignedNumber& operator=(const UnsignedNumber& lhs) = default;
     
     unsigned length() const;
     

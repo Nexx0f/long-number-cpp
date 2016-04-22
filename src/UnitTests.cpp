@@ -5,40 +5,71 @@ using namespace numlib;
 
 int TAB_LEVEL = 0;
 
-void print_tabs()
+void printTabs()
 {
     for (int i = 0; i < TAB_LEVEL; i++)
         printf("  ");
 }
 
-char GROUP_FAILED = 0;
+bool GROUP_FAILED = 0;
 int GROUPS_FAILED = 0;
 
 #define verify(condition) \
     if (!(condition)) \
     { \
-        print_tabs(); \
+        printTabs(); \
         std::cout << "verification failed: '" << #condition << "' is false" << std::endl; \
-        GROUP_FAILED = 1; \
+        GROUP_FAILED = true; \
         break; \
     } \
     else \
     { \
-        print_tabs(); \
-        std::cout << "verification ok: '" << #condition << "%s'" << std::endl; \
+        printTabs(); \
+        std::cout << "verification ok: '" << #condition << "'" << std::endl; \
+    }
+    
+#define verify_exception(code,err) \
+    try\
+    {\
+        code; \
+        std::cout << "verification failed: exception expected." << std::endl; \
+        GROUP_FAILED = true; \
+        break; \
+    }\
+    catch(NumberException& e)\
+    {\
+        if (e.getError() != NumberError::err) \
+        { \
+            std::cout << "verification failed: exception caught ('" << e.what() << "'), but its error code is different from '" \
+                << #err << "'" << std::endl; \
+            GROUP_FAILED = true; \
+            break; \
+        } \
+        else \
+        { \
+            std::cout << "verification ok, desired exception caugh ('" << e.what() << "')." << std::endl; \
+        } \
     }
 
 #define begin_test_group(name) \
     { \
-        GROUP_FAILED = 0; \
+        GROUP_FAILED = false; \
         TAB_LEVEL++; \
         std::cout << "Test group '" << name << "'" << std::endl; \
-        do \
-        {
+        try\
+        {\
+            do \
+            {
 
 #define end_test_group() \
+            } \
+            while (0); \
         } \
-        while (0); \
+        catch (std::exception& e) \
+        { \
+            std::cout << "unexpected exception: " << e.what() << std::endl; \
+            GROUP_FAILED = true; \
+        } \
         TAB_LEVEL--; \
         if (GROUP_FAILED) \
         { \
@@ -57,8 +88,29 @@ void testNumberCreation()
 {
     begin_test_group("number creation");
     
-    Number x(12);
-    verify(x[0] == 2 && x[1] == 1);
+    {
+        UnsignedNumber x(12);
+        verify(x[0] == 2 && x[1] == 1);
+        
+        x = UnsignedNumber(12u);
+        verify(x[0] == 2 && x[1] == 1);
+        
+        x = UnsignedNumber("+100");
+        verify(x[0] == 0 && x[1] == 0 && x[2] == 1);
+        
+        const UnsignedNumber& constRef = x;
+        verify(constRef[0] == 0 && constRef[1] == 0 && constRef[2] == 1);
+        verify_exception(constRef[3], INDEX_OUT_OF_BOUNDS);
+        
+        x = UnsignedNumber();
+        verify(x[0] == 0);
+    }
+    
+    verify_exception(UnsignedNumber(-12), NEGATIVE_NUMBER);
+    verify_exception(UnsignedNumber("124abc"), INVALID_FORMAT);
+    verify_exception(UnsignedNumber(""), INVALID_FORMAT);
+    verify_exception(UnsignedNumber("123")[3], INDEX_OUT_OF_BOUNDS);
+    verify_exception(UnsignedNumber("123")[-1], INDEX_OUT_OF_BOUNDS);
     
     end_test_group();
 }
