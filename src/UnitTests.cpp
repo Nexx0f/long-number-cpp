@@ -84,9 +84,9 @@ int GROUPS_FAILED = 0;
 
 #define check_ok() verify(long_number_errno == ERROR_OK);
 
-void testNumberCreation()
+void testUnsignedCreation()
 {
-    begin_test_group("number creation");
+    begin_test_group("unsigned creation");
     
     {
         UnsignedNumber x(12);
@@ -104,6 +104,9 @@ void testNumberCreation()
         
         x = UnsignedNumber();
         verify(x[0] == 0);
+        
+        x = UnsignedNumber("0");
+        verify(x[0] == 0);
     }
     
     verify_exception(UnsignedNumber(-12), NEGATIVE_NUMBER);
@@ -115,7 +118,7 @@ void testNumberCreation()
     end_test_group();
 }
 
-void testNumberComparison()
+void testUnsignedComparison()
 {
     begin_test_group("number comparison");
     
@@ -135,10 +138,25 @@ void testNumberComparison()
     end_test_group();
 }
 
+UnsignedNumber operator"" _n (const char* str)
+{
+    return UnsignedNumber(str);
+}
+
+void testUnsignedArithmetics()
+{
+    begin_test_group("unsigned arithmetics");
+    verify(10_n + 10_n == 20_n);
+    verify(0_n + 0_n == 0_n);
+    verify(11_n + 9_n == 20_n);
+    end_test_group();
+}
+
 void runUnitTests()
 {
-    testNumberCreation();
-    testNumberComparison();
+    testUnsignedCreation();
+    testUnsignedComparison();
+    testUnsignedArithmetics();
 }
 
 int main()

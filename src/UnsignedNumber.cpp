@@ -92,6 +92,30 @@ void numlib::UnsignedNumber::appendDigit(int digit)
     digits.push_back(digit);
 }
 
+void numlib::UnsignedNumber::shrinkLeadingZeros()
+{
+    while (digits.size() > 1 && !digits.back())
+        digits.pop_back();
+}
+
+UnsignedNumber& numlib::UnsignedNumber::operator+=(const UnsignedNumber& rhs)
+{
+    digits.resize(digits.size() + 1);
+    
+    int carry = 0;
+    for (unsigned i = 0; i < length(); i++)
+    {
+        carry += digits[i];
+        if (i < rhs.length()) carry += rhs[i];
+        
+        digits[i] = carry % 10;
+        carry /= 10;
+    }
+    
+    shrinkLeadingZeros();
+    return *this;
+}
+
 int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vector<unsigned>& b, int bSign)
 {
     unsigned aNonzero = a.size() - 1, bNonzero = b.size() - 1;
@@ -161,4 +185,10 @@ bool numlib::operator<=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
 bool numlib::operator>=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
 {
     return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) >= 0;
+}
+
+UnsignedNumber numlib::operator+(UnsignedNumber lhs, const UnsignedNumber& rhs)
+{
+    lhs += rhs;
+    return lhs;
 }

@@ -41,10 +41,10 @@ public :
     void appendDigit(int digit);
 };
 
-UnsignedNumber operator+(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
-UnsignedNumber operator-(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
-UnsignedNumber operator/(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
-UnsignedNumber operator*(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator+(UnsignedNumber lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator-(UnsignedNumber lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator/(UnsignedNumber lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator*(UnsignedNumber lhs, const UnsignedNumber& rhs);
 
 bool operator==(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
 bool operator!=(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
