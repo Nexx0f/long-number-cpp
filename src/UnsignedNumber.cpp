@@ -3,6 +3,8 @@
 
 using namespace numlib;
 
+int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vector<unsigned>& b, int bSign);
+
 numlib::UnsignedNumber::UnsignedNumber():
     UnsignedNumber(0)
 {}
@@ -57,4 +59,106 @@ const unsigned& numlib::UnsignedNumber::operator[](int index) const
         throw NumberException(NumberError::INDEX_OUT_OF_BOUNDS);
     
     return digits[index];
+}
+
+std::istream& numlib::operator>>(std::istream& in, numlib::UnsignedNumber& num)
+{
+    char first;
+    in >> first;
+    
+    if (first == '-')
+        throw NumberException(NumberError::NEGATIVE_NUMBER);
+    else if (isdigit(first))
+        in.unget();
+    else
+        throw NumberException(NumberError::INVALID_FORMAT);
+    
+    in >> first;
+    while (isdigit(first))
+    {
+        num.appendDigit(first - '0');
+        in >> first;
+    }
+    in.unget();
+    
+    return in;
+}
+
+void numlib::UnsignedNumber::appendDigit(int digit)
+{
+    if (digit < 0 || digit >= 10)
+        throw NumberException(NumberError::INVALID_ARGUMENT);
+    
+    digits.push_back(digit);
+}
+
+int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vector<unsigned>& b, int bSign)
+{
+    unsigned aNonzero = a.size() - 1, bNonzero = b.size() - 1;
+    
+    while (aNonzero > 0 && a[aNonzero] == 0) aNonzero--;
+    while (bNonzero > 0 && b[bNonzero] == 0) bNonzero--;
+        
+    bool aZero = aNonzero == 0 && a[aNonzero] == 0;
+    bool bZero = bNonzero == 0 && b[bNonzero] == 0;
+        
+    if (aZero && bZero) return 0;
+    
+    if (aZero) return bSign;
+    if (bZero) return aSign;
+    
+    if (aSign != bSign) return aSign;
+    
+    int noSignResult = 0;
+    
+    if (aNonzero == bNonzero)
+    {
+        for (int i = aNonzero; i >= 0; i--)
+            if (a[i] != b[i])
+            {
+                noSignResult = a[i] > b[i] ? 1 : -1;
+                break;
+            }
+    }
+    else
+    {
+        noSignResult = aNonzero > bNonzero ? 1 : -1;
+    }
+    
+    return noSignResult * aSign;
+}
+
+const std::vector<unsigned>& numlib::UnsignedNumber::getDigits() const
+{
+    return digits;
+}
+
+bool numlib::operator==(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) == 0;
+}
+
+bool numlib::operator!=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) != 0;
+}
+
+bool numlib::operator<(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) < 0;
+}
+
+bool numlib::operator>(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) > 0;
+}
+
+bool numlib::operator<=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) <= 0;
+}
+
+bool numlib::operator>=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
+{
+    return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) >= 0;
 }

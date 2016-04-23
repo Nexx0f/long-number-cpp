@@ -11,6 +11,8 @@ class UnsignedNumber
 {
     std::vector<unsigned> digits;
     
+    void shrinkLeadingZeros();
+    
 public :
     
     UnsignedNumber();
@@ -24,6 +26,7 @@ public :
     UnsignedNumber& operator=(const UnsignedNumber& lhs) = default;
     
     unsigned length() const;
+    const std::vector<unsigned>& getDigits() const;
     
     unsigned& operator[](int index);
     const unsigned& operator[](int index) const;
@@ -34,6 +37,8 @@ public :
     UnsignedNumber& operator*=(const UnsignedNumber& rhs);
     
     bool isZero() const;
+    
+    void appendDigit(int digit);
 };
 
 UnsignedNumber operator+(const UnsignedNumber& lhs, const UnsignedNumber& rhs);

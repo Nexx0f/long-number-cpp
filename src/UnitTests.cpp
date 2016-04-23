@@ -115,9 +115,30 @@ void testNumberCreation()
     end_test_group();
 }
 
+void testNumberComparison()
+{
+    begin_test_group("number comparison");
+    
+    verify(UnsignedNumber("100234234234") == UnsignedNumber("100234234234"));
+    verify(!(UnsignedNumber("1") == UnsignedNumber("2")));
+    verify(UnsignedNumber("1") != UnsignedNumber("2"));
+    verify(!(UnsignedNumber("100234234234") != UnsignedNumber("100234234234")));
+    verify(UnsignedNumber("1") < UnsignedNumber("2"));
+    verify(!(UnsignedNumber("2") < UnsignedNumber("1")));
+    verify(UnsignedNumber("200") > UnsignedNumber("1"));
+    verify(!(UnsignedNumber("1") > UnsignedNumber("200")));
+    verify(UnsignedNumber("200") >= UnsignedNumber("200"));
+    verify(!(UnsignedNumber("200") >= UnsignedNumber("201")));
+    verify(UnsignedNumber("200") <= UnsignedNumber("200"));
+    verify(UnsignedNumber("200") <= UnsignedNumber("1000"));
+    
+    end_test_group();
+}
+
 void runUnitTests()
 {
     testNumberCreation();
+    testNumberComparison();
 }
 
 int main()
