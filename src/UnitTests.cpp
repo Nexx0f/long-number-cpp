@@ -1,5 +1,6 @@
 #include "NumberLibrary.hpp"
 #include <iostream>
+#include <sstream>
 
 using namespace numlib;
 
@@ -146,6 +147,45 @@ UnsignedNumber operator"" _n (const char* str)
     return UnsignedNumber(str);
 }
 
+
+void testUnsignedIo()
+{
+#define checkOut(init, check) \
+    {\
+        std::ostringstream stream; \
+        stream << UnsignedNumber(init); \
+        verify(stream.str() == check); \
+    }\
+    
+#define checkIn(init, check) \
+    {\
+        std::istringstream stream(init); \
+        UnsignedNumber x; \
+        stream >> x; \
+        verify(x == UnsignedNumber(check)); \
+    }\
+    
+    begin_test_group("unsigned IO");
+    
+    checkOut("123", "123");
+    checkOut("+123", "123");
+    checkOut("+0", "0");
+    checkOut("+0000123", "123");
+    
+    checkIn("123", "123");
+    checkIn("+123", "123");
+    checkIn("+0", "0");
+    checkIn("+0000123", "123");
+    
+    verify_exception(std::istringstream in("-100"); UnsignedNumber x; in >> x;, NEGATIVE_NUMBER);
+    verify_exception(std::istringstream in("abcd"); UnsignedNumber x; in >> x;, INVALID_FORMAT);
+    
+    end_test_group();
+    
+#undef checkOut
+#undef checkIn
+}
+
 void testUnsignedArithmetics()
 {
     begin_test_group("unsigned arithmetics");
@@ -183,6 +223,7 @@ void runUnitTests()
 {
     testUnsignedCreation();
     testUnsignedComparison();
+    testUnsignedIo();
     testUnsignedArithmetics();
 }
 

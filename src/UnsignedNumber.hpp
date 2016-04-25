@@ -40,8 +40,6 @@ public :
     UnsignedNumber& operator%=(const UnsignedNumber& rhs);
     
     bool isZero() const;
-    
-    void appendDigit(int digit);
 };
 
 UnsignedNumber operator+(UnsignedNumber lhs, const UnsignedNumber& rhs);

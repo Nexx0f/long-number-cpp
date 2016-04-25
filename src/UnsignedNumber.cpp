@@ -1,6 +1,8 @@
 #include "UnsignedNumber.hpp"
 #include "NumberException.hpp"
 
+#include <algorithm>
+
 using namespace numlib;
 
 int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vector<unsigned>& b, int bSign);
@@ -68,18 +70,24 @@ std::istream& numlib::operator>>(std::istream& in, numlib::UnsignedNumber& num)
     
     if (first == '-')
         throw NumberException(NumberError::NEGATIVE_NUMBER);
-    else if (isdigit(first))
-        in.unget();
-    else
+    
+    if (first == '+')
+        in >> first;
+
+    if (!isdigit(first))
         throw NumberException(NumberError::INVALID_FORMAT);
     
-    in >> first;
-    while (isdigit(first))
+    std::string digits;
+    
+    do
     {
-        num.appendDigit(first - '0');
-        in >> first;
+        digits += first;
     }
-    in.unget();
+    while (in >> first && isdigit(first));
+    if (in.eof())
+        in.unget();
+    
+    num = UnsignedNumber(digits);
     
     return in;
 }
@@ -97,14 +105,6 @@ std::ostream& numlib::operator<<(std::ostream& out, const UnsignedNumber& num)
         out << (char)('0' + num[i]);
     
     return out;
-}
-
-void numlib::UnsignedNumber::appendDigit(int digit)
-{
-    if (digit < 0 || digit >= 10)
-        throw NumberException(NumberError::INVALID_ARGUMENT);
-    
-    digits.push_back(digit);
 }
 
 void numlib::UnsignedNumber::shrinkLeadingZeros()
