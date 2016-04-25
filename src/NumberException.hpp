@@ -17,6 +17,7 @@ enum class NumberError
     INDEX_OUT_OF_BOUNDS,
     
     // when using UnsignedNumber constructor with signed ints
+    // when substracting lower from greater
     NEGATIVE_NUMBER,
     
     // null pointer / etc.

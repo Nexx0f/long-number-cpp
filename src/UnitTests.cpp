@@ -32,6 +32,7 @@ int GROUPS_FAILED = 0;
     try\
     {\
         code; \
+        printTabs(); \
         std::cout << "verification failed: exception expected." << std::endl; \
         GROUP_FAILED = true; \
         break; \
@@ -40,6 +41,7 @@ int GROUPS_FAILED = 0;
     {\
         if (e.getError() != NumberError::err) \
         { \
+            printTabs(); \
             std::cout << "verification failed: exception caught ('" << e.what() << "'), but its error code is different from '" \
                 << #err << "'" << std::endl; \
             GROUP_FAILED = true; \
@@ -47,7 +49,8 @@ int GROUPS_FAILED = 0;
         } \
         else \
         { \
-            std::cout << "verification ok, desired exception caugh ('" << e.what() << "')." << std::endl; \
+            printTabs(); \
+            std::cout << "verification ok, desired exception caught ('" << e.what() << "')." << std::endl; \
         } \
     }
 
@@ -149,6 +152,10 @@ void testUnsignedArithmetics()
     verify(10_n + 10_n == 20_n);
     verify(0_n + 0_n == 0_n);
     verify(11_n + 9_n == 20_n);
+    verify(11_n - 2_n == 9_n);
+    verify(1010_n - 101_n == 909_n);
+    verify(100000_n - 1_n == 99999_n);
+    verify_exception(100_n - 200_n, NEGATIVE_NUMBER);
     end_test_group();
 }
 

@@ -116,6 +116,40 @@ UnsignedNumber& numlib::UnsignedNumber::operator+=(const UnsignedNumber& rhs)
     return *this;
 }
 
+UnsignedNumber& numlib::UnsignedNumber::operator-=(const UnsignedNumber& rhs)
+{
+    if (*this < rhs)
+        throw NumberException(NumberError::NEGATIVE_NUMBER);
+    
+    bool isCarry = 0;
+    for (unsigned i = 0; i < length(); i++)
+    {
+        int digit = digits[i];
+        
+        if (isCarry && digit > 0)
+        {
+            isCarry = false;
+            digit--;
+        }
+        
+        if (isCarry)
+            digit += 9;
+        
+        int needSub = i < rhs.length() ? rhs[i] : 0;
+        
+        if (needSub > digit)
+        {
+            digit += 10;
+            isCarry = true;
+        }
+        
+        digits[i] = digit - needSub;
+    }
+    
+    shrinkLeadingZeros();
+    return *this;
+}
+
 int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vector<unsigned>& b, int bSign)
 {
     unsigned aNonzero = a.size() - 1, bNonzero = b.size() - 1;
@@ -190,5 +224,11 @@ bool numlib::operator>=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
 UnsignedNumber numlib::operator+(UnsignedNumber lhs, const UnsignedNumber& rhs)
 {
     lhs += rhs;
+    return lhs;
+}
+
+UnsignedNumber numlib::operator-(UnsignedNumber lhs, const UnsignedNumber& rhs)
+{
+    lhs -= rhs;
     return lhs;
 }
