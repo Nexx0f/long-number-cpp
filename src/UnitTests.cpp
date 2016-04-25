@@ -156,6 +156,12 @@ void testUnsignedArithmetics()
     verify(1010_n - 101_n == 909_n);
     verify(100000_n - 1_n == 99999_n);
     verify_exception(100_n - 200_n, NEGATIVE_NUMBER);
+    
+    verify(9_n * 9_n == 81_n);
+    verify(23423_n * 234234_n == 5486462982_n);
+    verify(10_n * 0_n == 0_n);
+    verify(0_n * 10_n == 0_n);
+    
     end_test_group();
 }
 
