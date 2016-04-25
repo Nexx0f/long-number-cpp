@@ -12,6 +12,8 @@ class UnsignedNumber
     std::vector<unsigned> digits;
     
     void shrinkLeadingZeros();
+    void divideNumbers(const UnsignedNumber& a, const UnsignedNumber& b, UnsignedNumber& quotient, UnsignedNumber& remainder);
+    void shift(int by);
     
 public :
     
@@ -33,8 +35,9 @@ public :
 
     UnsignedNumber& operator+=(const UnsignedNumber& rhs);
     UnsignedNumber& operator-=(const UnsignedNumber& rhs);
-    UnsignedNumber& operator/=(const UnsignedNumber& rhs);
     UnsignedNumber& operator*=(const UnsignedNumber& rhs);
+    UnsignedNumber& operator/=(const UnsignedNumber& rhs);
+    UnsignedNumber& operator%=(const UnsignedNumber& rhs);
     
     bool isZero() const;
     
@@ -43,8 +46,9 @@ public :
 
 UnsignedNumber operator+(UnsignedNumber lhs, const UnsignedNumber& rhs);
 UnsignedNumber operator-(UnsignedNumber lhs, const UnsignedNumber& rhs);
-UnsignedNumber operator/(UnsignedNumber lhs, const UnsignedNumber& rhs);
 UnsignedNumber operator*(UnsignedNumber lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator/(UnsignedNumber lhs, const UnsignedNumber& rhs);
+UnsignedNumber operator%(UnsignedNumber lhs, const UnsignedNumber& rhs);
 
 bool operator==(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
 bool operator!=(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
@@ -54,6 +58,6 @@ bool operator<=(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
 bool operator>=(const UnsignedNumber& lhs, const UnsignedNumber& rhs);
 
 std::istream& operator>>(std::istream& in, UnsignedNumber& num);
-std::ostream& operator<<(std::ostream& out, UnsignedNumber& num);
+std::ostream& operator<<(std::ostream& out, const UnsignedNumber& num);
 
 } // namespace numlib

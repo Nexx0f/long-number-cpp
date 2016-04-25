@@ -24,8 +24,9 @@ public :
     
     Number& operator+=(const Number& rhs);
     Number& operator-=(const Number& rhs);
-    Number& operator/=(const Number& rhs);
     Number& operator*=(const Number& rhs);
+    Number& operator/=(const Number& rhs);
+    Number& operator%=(const Number& rhs);
     
     bool operator==(const Number& rhs) const;
     bool operator!=(const Number& rhs) const;
@@ -37,8 +38,9 @@ public :
 
 Number operator+(const Number& lhs, const Number& rhs);
 Number operator-(const Number& lhs, const Number& rhs);
-Number operator/(const Number& lhs, const Number& rhs);
 Number operator*(const Number& lhs, const Number& rhs);
+Number operator/(const Number& lhs, const Number& rhs);
+Number operator%(const Number& lhs, const Number& rhs);
 
 bool operator==(const Number& lhs, const Number& rhs);
 bool operator!=(const Number& lhs, const Number& rhs);

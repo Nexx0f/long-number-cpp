@@ -162,6 +162,20 @@ void testUnsignedArithmetics()
     verify(10_n * 0_n == 0_n);
     verify(0_n * 10_n == 0_n);
     
+    verify(10_n / 2_n == 5_n);
+    verify(5486462982_n / 23423_n == 234234_n);
+    verify(100500_n / 7_n == 14357_n);
+    verify(1201_n / 3_n == 400_n);
+    verify(1000_n / 100_n == 10_n);
+    
+    verify(10_n % 2_n == 0_n);
+    verify(5486462982_n % 23423_n == 0_n);
+    verify(100500_n % 7_n == 1_n);
+    verify(1201_n % 3_n == 1_n);
+    verify(1000_n % 100_n == 0_n);
+    verify(3_n % 2_n == 1_n);
+    verify(5_n % 2_n == 1_n);
+    
     end_test_group();
 }
 

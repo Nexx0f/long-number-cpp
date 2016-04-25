@@ -84,6 +84,21 @@ std::istream& numlib::operator>>(std::istream& in, numlib::UnsignedNumber& num)
     return in;
 }
 
+std::ostream& numlib::operator<<(std::ostream& out, const UnsignedNumber& num)
+{
+    int nonzero = num.length() - 1;
+    while (nonzero > 0 && !num[nonzero])
+        nonzero--;
+    
+    if (nonzero == 0 && num[nonzero] == 0)
+        return out << '0';
+    
+    for (int i = nonzero; i >= 0; i--)
+        out << (char)('0' + num[i]);
+    
+    return out;
+}
+
 void numlib::UnsignedNumber::appendDigit(int digit)
 {
     if (digit < 0 || digit >= 10)
@@ -121,7 +136,7 @@ UnsignedNumber& numlib::UnsignedNumber::operator-=(const UnsignedNumber& rhs)
     if (*this < rhs)
         throw NumberException(NumberError::NEGATIVE_NUMBER);
     
-    bool isCarry = 0;
+    bool isCarry = false;
     for (unsigned i = 0; i < length(); i++)
     {
         int digit = digits[i];
@@ -189,7 +204,7 @@ int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vecto
         
     if (aZero && bZero) return 0;
     
-    if (aZero) return bSign;
+    if (aZero) return -bSign;
     if (bZero) return aSign;
     
     if (aSign != bSign) return aSign;
@@ -211,6 +226,50 @@ int universalCompare(const std::vector<unsigned>& a, int aSign, const std::vecto
     }
     
     return noSignResult * aSign;
+}
+
+// i -> i + by
+void numlib::UnsignedNumber::shift(int by)
+{
+    int from = by == 1 ? length() - 1 : 0;
+    int to = by == 1 ? -1 : (int)length();
+    for (int i = from; i != to; i -= by)
+        digits[i] = (i - by >= 0 && i - by < (int)length()) ? digits[i - by] : 0;
+}
+
+void numlib::UnsignedNumber::divideNumbers(const UnsignedNumber& a, const UnsignedNumber& b,
+                                           UnsignedNumber& quotient, UnsignedNumber& remainder)
+{
+    remainder = a;
+    quotient.digits.assign(a.length(), 0);
+    
+    UnsignedNumber bPower = b;
+    bPower.digits.resize(a.length() + 1);
+    
+    int nShifts = 0;
+    while (remainder >= bPower)
+    {
+        bPower.shift(1);
+        nShifts++;
+    }
+    
+    while (nShifts > 0)
+    {
+        bPower.shift(-1);
+        nShifts--;
+        
+        int digit = 0;
+        while (remainder >= bPower)
+        {
+            remainder -= bPower;
+            digit++;
+        }
+        
+        quotient[nShifts] = digit;
+    }
+    
+    quotient.shrinkLeadingZeros();
+    remainder.shrinkLeadingZeros();
 }
 
 const std::vector<unsigned>& numlib::UnsignedNumber::getDigits() const
@@ -248,6 +307,20 @@ bool numlib::operator>=(const UnsignedNumber& lhs, const UnsignedNumber& rhs)
     return universalCompare(lhs.getDigits(), 1, rhs.getDigits(), 1) >= 0;
 }
 
+UnsignedNumber& UnsignedNumber::operator/=(const UnsignedNumber& rhs)
+{
+    UnsignedNumber q, r;
+    divideNumbers(*this, rhs, q, r);
+    return *this = q;
+}
+
+UnsignedNumber& UnsignedNumber::operator%=(const UnsignedNumber& rhs)
+{
+    UnsignedNumber q, r;
+    divideNumbers(*this, rhs, q, r);
+    return *this = r;
+}
+
 UnsignedNumber numlib::operator+(UnsignedNumber lhs, const UnsignedNumber& rhs)
 {
     lhs += rhs;
@@ -263,5 +336,17 @@ UnsignedNumber numlib::operator-(UnsignedNumber lhs, const UnsignedNumber& rhs)
 UnsignedNumber numlib::operator*(UnsignedNumber lhs, const UnsignedNumber& rhs)
 {
     lhs *= rhs;
+    return lhs;
+}
+
+UnsignedNumber numlib::operator/(UnsignedNumber lhs, const UnsignedNumber& rhs)
+{
+    lhs /= rhs;
+    return lhs;
+}
+
+UnsignedNumber numlib::operator%(UnsignedNumber lhs, const UnsignedNumber& rhs)
+{
+    lhs %= rhs;
     return lhs;
 }
