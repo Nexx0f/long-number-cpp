@@ -219,12 +219,159 @@ void testUnsignedArithmetics()
     end_test_group();
 }
 
+void testSignedCreation()
+{
+    begin_test_group("signed creation");
+    
+    {
+        Number x(-12);
+        verify(x[0] == 2 && x[1] == 1 && x.sign() == -1);
+        
+        x = Number(12u);
+        verify(x[0] == 2 && x[1] == 1 && x.sign() == 1);
+        
+        x = Number("-100");
+        verify(x[0] == 0 && x[1] == 0 && x[2] == 1 && x.sign() == -1);
+        
+        const Number& constRef = x;
+        verify(constRef[0] == 0 && constRef[1] == 0 && constRef[2] == 1 && constRef.sign() == -1);
+        verify_exception(constRef[3], INDEX_OUT_OF_BOUNDS);
+        
+        x = Number();
+        verify(x[0] == 0);
+        
+        x = Number("0");
+        verify(x[0] == 0);
+    }
+    
+    verify_exception(Number("124abc"), INVALID_FORMAT);
+    verify_exception(Number(""), INVALID_FORMAT);
+    verify_exception(Number("123")[3], INDEX_OUT_OF_BOUNDS);
+    verify_exception(Number("123")[-1], INDEX_OUT_OF_BOUNDS);
+    
+    end_test_group();
+}
+
+void testSignedComparison()
+{
+    begin_test_group("number comparison");
+    
+    verify(Number("100234234234") == Number("100234234234"));
+    verify(!(Number("1") == Number("2")));
+    verify(Number("1") != Number("2"));
+    verify(!(Number("100234234234") != Number("100234234234")));
+    verify(Number("1") < Number("2"));
+    verify(!(Number("2") < Number("1")));
+    verify(Number("200") > Number("1"));
+    verify(!(Number("1") > Number("200")));
+    verify(Number("200") >= Number("200"));
+    verify(!(Number("200") >= Number("201")));
+    verify(Number("200") <= Number("200"));
+    verify(Number("200") <= Number("1000"));
+    verify(Number("-200") <= Number("200"));
+    verify(!(Number("200") <= Number("-1000")));
+    
+    end_test_group();
+}
+
+Number operator"" _s (const char* str)
+{
+    return Number(str);
+}
+
+void testSignedIo()
+{
+#define checkOut(init, check) \
+    {\
+        std::ostringstream stream; \
+        stream << Number(init); \
+        verify(stream.str() == check); \
+    }\
+    
+#define checkIn(init, check) \
+    {\
+        std::istringstream stream(init); \
+        Number x; \
+        stream >> x; \
+        verify(x == Number(check)); \
+    }\
+    
+    begin_test_group("signed IO");
+    
+    checkOut("123", "123");
+    checkOut("-123", "-123");
+    checkOut("+0", "0");
+    checkOut("-0", "0");
+    checkOut("+0000123", "123");
+    checkOut("-000123", "-123");
+    
+    checkIn("123", "123");
+    checkIn("-123", "-123");
+    checkIn("+0", "0");
+    checkIn("-0", "0");
+    checkIn("+0000123", "123");
+    checkIn("-000123", "-123");
+    
+    verify_exception(std::istringstream in("abcd"); Number x; in >> x;, INVALID_FORMAT);
+    
+    end_test_group();
+    
+#undef checkOut
+#undef checkIn
+}
+
+void testSignedArithmetics()
+{
+    begin_test_group("signed arithmetics");
+    
+    verify(-10_s + -10_s == -20_s);
+    verify(-10_s + 20_s == 10_s);
+    verify(-10_s + 20_s == 10_s);
+    verify(10_s - 20_s == -10_s);
+    verify(11_s - 2_s == 9_s);
+    verify(1010_s - 101_s == 909_s);
+    verify(100000_s - 1_s == 99999_s);
+    verify(11_s + 9_s == 20_s);
+    
+    verify(9_s * 9_s == 81_s);
+    verify(-23423_s * -234234_s == 5486462982_s);
+    verify(10_s * -10_s == -100_s);
+    verify(10_s * -10_s == -100_s);
+    verify(10_s * 0_s == 0_s);
+    verify(0_s * -10_s == 0_s);
+    
+    verify(10_s / 2_s == 5_s);
+    verify(5486462982_s / -23423_s == -234234_s);
+    verify(100500_s / 7_s == 14357_s);
+    verify(1201_s / 3_s == 400_s);
+    verify(-1000_s / -100_s == 10_s);
+    verify(-3_s / 2_s == -1_s);
+    verify(3_s / -2_s == -1_s);
+    
+    verify(10_s % 2_s == 0_s);
+    verify(5486462982_s % -23423_s == 0_s);
+    verify(100500_s % 7_s == 1_s);
+    verify(1201_s % 3_s == 1_s);
+    verify(-1000_s % -100_s == 0_s);
+    verify(-3_s % 2_s == -1_s);
+    verify(3_s % -2_s == -1_s);
+    verify(-5_s % -3_s == 2_s);
+    verify(-5_s % 3_s == -2_s);
+    
+    end_test_group();
+}
+
 void runUnitTests()
 {
     testUnsignedCreation();
     testUnsignedComparison();
     testUnsignedIo();
     testUnsignedArithmetics();
+    
+    testSignedCreation();
+    testSignedComparison();
+    testSignedIo();
+    testSignedArithmetics();
 }
 
 int main()
