@@ -9,6 +9,7 @@ namespace numlib
 
 class UnsignedNumber
 {
+protected :
     std::vector<unsigned> digits;
     
     void shrinkLeadingZeros();
@@ -38,8 +39,6 @@ public :
     UnsignedNumber& operator*=(const UnsignedNumber& rhs);
     UnsignedNumber& operator/=(const UnsignedNumber& rhs);
     UnsignedNumber& operator%=(const UnsignedNumber& rhs);
-    
-    bool isZero() const;
 };
 
 UnsignedNumber operator+(UnsignedNumber lhs, const UnsignedNumber& rhs);
